@@ -7,7 +7,6 @@ class Main {
         for(let i=0;i<events.length;i++) {
             const event = new Event(events[i].id,events[i].klub,events[i].ime,events[i].kategorija,events[i].izvodjac,events[i].rating || 0);
             await event.averageVotes();
-            console.log(event);
             this.events.push(event);
         }
         const chosenSort = localStorage.getItem('ORDER') || 'ASC';
@@ -25,7 +24,7 @@ class Main {
             alert("kategorija ne moze biti prazno");
             return;
         }
-        await await event.editEvent(ime, kategorija);
+        await event.editEvent(ime, kategorija);
         await this.crtaj();
     }
     async sort(sortOrder) {
@@ -49,7 +48,6 @@ class Main {
     async crtaj() {
         document.body.innerHTML = '';
         const chosenSort = localStorage.getItem('ORDER') || 'ASC';
-        console.log(chosenSort,'chosen');
         let navigationPanel=document.createElement("nav");
         navigationPanel.className="navigation";
         document.body.appendChild(navigationPanel);
@@ -123,22 +121,23 @@ class Main {
         div2.innerText = "Kategorija eventa je: " + this.events[i].kategorija;
         wrapper.appendChild(div2);
 
+        
+        const imeKluba = document.createElement('h3');
+        imeKluba.innerText ="Ime kluba je: " + this.events[i].klub.ime;
+        wrapper.appendChild(imeKluba);
+        const lokacijaKluba=document.createElement('div');
+        lokacijaKluba.innerText="Adresa kluba je: " + this.events[i].klub.adresa
+        wrapper.appendChild(lokacijaKluba);
+        const imeIzvodjaca = document.createElement('h3');
+        imeIzvodjaca.innerText ="Ime izvodjaca je: " + this.events[i].izvodjac.ime + " " + this.events[i].izvodjac.prezime;
+        wrapper.appendChild(imeIzvodjaca);
+        const kontaktIzvodjaca=document.createElement('div');
+        kontaktIzvodjaca.innerText="Email izvodjaca: " + this.events[i].izvodjac.email;
+        wrapper.appendChild(kontaktIzvodjaca);  
         const div3 = document.createElement('div');
         div3.className = 'ocena';
         div3.innerText = "Ocena za izvodjaca je: " + this.events[i].rating;
         wrapper.appendChild(div3);
-        const imeKluba = document.createElement('h3');
-        imeKluba.innerText ="Ime kluba je: " + this.events[i].klub.ime;
-        wrapper.appendChild(imeKluba);
-
-        const imeIzvodjaca = document.createElement('h3');
-        imeIzvodjaca.innerText ="Ime izvodjaca je: " + this.events[i].izvodjac.ime + " " + this.events[i].izvodjac.prezime;
-        wrapper.appendChild(imeIzvodjaca);
-        
-        const kontaktIzvodjaca=document.createElement('div');
-        kontaktIzvodjaca.innerText="Email izvodjaca: " + this.events[i].izvodjac.email;
-        wrapper.appendChild(kontaktIzvodjaca);  
-
 
         const deleteBtn = document.createElement('button');
         deleteBtn.innerText = "Delete event";
@@ -173,10 +172,3 @@ class Main {
 const main = new Main();
 main.crtaj();
 
-/* 
-  <div class="card-wrapper">
-            <h3>Juzni vetar</h3>
-            <div class="event-location">Azbresnica</div>
-            <div class="ocena">5</div>
-        </div>
-*/

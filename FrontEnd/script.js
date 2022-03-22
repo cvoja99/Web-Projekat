@@ -25,6 +25,5 @@ $(document).ready(function(){
       
 });
 let user=new User();
-console.log(User);
 user.crtajMain();
 

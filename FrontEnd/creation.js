@@ -1,40 +1,4 @@
 import { Event } from './event.js';
-/*<div class="login-reg-panel">
-    <div class="login-info-box">
-        <h2>Create Club</h2>
-        <label id="label-club" for="log-club-show">Club</label>
-        <input type="radio" name="active-club-panel" id="log-club-show"  checked="checked">
-    </div>
-                        
-    <div class="register-info-box">
-        <h2>Create Event</h2>
-        <label id="label-event" for="log-event-show">Event</label>
-        <input type="radio" name="active-club-panel" id="log-event-show">
-    </div>
-                        
-    <div class="white-panel">
-        <div class="login-show">
-            <h2>Create club</h2>
-            <input type="text" placeholder="Ime" />
-            <input type="text" placeholder="Adresa" />
-            <input type="button" value="Create club">
-        </div>
-        <div class="register-show">
-            <h2>Create event</h2>
-            <input type="text" placeholder="Ime" />
-            <input type="text" placeholder="Kategorija" />
-            <select>
-                <option value="klub1">Klub1</option>
-                <option value="klub2">Klub2</option>
-            </select>
-            <select>
-                <option value="user1">User1</option>
-                <option value="user2">User2</option>
-            </select>
-            <input type="button" value="Create event">
-        </div>
-    </div>
-</div>*/
 let event = new Event();
 class Club {
     constructor(ime, adresa) {
@@ -84,7 +48,6 @@ class Club {
     async crtajMain() {
         const users= await(await fetch(`http://localhost:5000/User`)).json();
         const clubs= await(await fetch("http://localhost:5000/Klub")).json();
-        console.log(users,clubs);
     
         let regPanel = document.createElement("div");
         regPanel.className = "login-reg-panel";
@@ -179,7 +142,6 @@ class Club {
     
         let chooseClub=document.createElement("select");
         registerShow.appendChild(chooseClub);
-                console.log("poz");
 
         for(let i=0;i<clubs.length;i++) {
             let registerShowSelectOption2=document.createElement("option");

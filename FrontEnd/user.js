@@ -13,14 +13,18 @@ async getUser () {
     if(!email||!isValidEmail) {
         return "Invalid email";
     }
-    const user = await (await fetch(`http://localhost:5000/user/${email}`, { method: 'POST'})).json();
-    this.id=user.id;
-    this.ime=user.ime;
-    this.prezime=user.prezime;
-    this.email=user.email;
-    this.eventi=user.eventi;
-    localStorage.setItem("user",this.id);
-    window.location.href="/index.html";
+    const res = await fetch(`http://localhost:5000/user/${email}`, { method: 'POST'})
+    if(res.ok) {
+        const user = await res.json()
+        this.id=user.id;
+        this.ime=user.ime;
+        this.prezime=user.prezime;
+        this.email=user.email;
+        this.eventi=user.eventi;
+        localStorage.setItem("user",this.id);
+        window.location.href="/index.html";
+    }
+    else { alert("User not found!"); }
 }
 async registerUser(){
     const email = document.getElementById("reg-email").value;
