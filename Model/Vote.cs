@@ -19,10 +19,16 @@ namespace projekatWP_bar.Model
         public User Voter { get; set; }
         [ForeignKey("EventID")]
         public int EventID { get; set; }
-       
+        [ForeignKey("TargetUID")]
+        
+        public int targetUID { get; set; }
+        
+        [Column("TargetUserID")]
+        [JsonIgnore]
+        public User targetUser { get; set; }
+        [NotMapped]
         public Event Event { get; set; }
         [Column("Rating")]
         public int Rating { get; set; }
-
     }
 }

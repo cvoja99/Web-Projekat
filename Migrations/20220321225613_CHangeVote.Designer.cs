@@ -3,21 +3,45 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using projekatWP_bar.Model;
 
 namespace projekatWP_bar.Migrations
 {
     [DbContext(typeof(ClubContext))]
-    partial class ClubContextModelSnapshot : ModelSnapshot
+    [Migration("20220321225613_CHangeVote")]
+    partial class CHangeVote
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .UseIdentityColumns()
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.2");
+
+            modelBuilder.Entity("projekatWP_bar.Model.AttendingEvent", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<int?>("AttendeeID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("EventID")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("AttendeeID");
+
+                    b.HasIndex("EventID");
+
+                    b.ToTable("AttendingEvents");
+                });
 
             modelBuilder.Entity("projekatWP_bar.Model.Club", b =>
                 {
@@ -131,6 +155,22 @@ namespace projekatWP_bar.Migrations
                     b.ToTable("Vote");
                 });
 
+            modelBuilder.Entity("projekatWP_bar.Model.AttendingEvent", b =>
+                {
+                    b.HasOne("projekatWP_bar.Model.User", "Attendee")
+                        .WithMany()
+                        .HasForeignKey("AttendeeID");
+
+                    b.HasOne("projekatWP_bar.Model.Event", "Event")
+                        .WithMany("Gosti")
+                        .HasForeignKey("EventID")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Attendee");
+
+                    b.Navigation("Event");
+                });
+
             modelBuilder.Entity("projekatWP_bar.Model.Event", b =>
                 {
                     b.HasOne("projekatWP_bar.Model.User", "Izvodjac")
@@ -182,6 +222,8 @@ namespace projekatWP_bar.Migrations
             modelBuilder.Entity("projekatWP_bar.Model.Event", b =>
                 {
                     b.Navigation("Glasovi");
+
+                    b.Navigation("Gosti");
                 });
 
             modelBuilder.Entity("projekatWP_bar.Model.User", b =>

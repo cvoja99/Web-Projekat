@@ -3,21 +3,45 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using projekatWP_bar.Model;
 
 namespace projekatWP_bar.Migrations
 {
     [DbContext(typeof(ClubContext))]
-    partial class ClubContextModelSnapshot : ModelSnapshot
+    [Migration("20220321204128_MyFourthMigration")]
+    partial class MyFourthMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .UseIdentityColumns()
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.2");
+
+            modelBuilder.Entity("projekatWP_bar.Model.AttendingEvent", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<int?>("AttendeeID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("EventID")
+                        .HasColumnType("int");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("AttendeeID");
+
+                    b.HasIndex("EventID");
+
+                    b.ToTable("AttendingEvents");
+                });
 
             modelBuilder.Entity("projekatWP_bar.Model.Club", b =>
                 {
@@ -117,18 +141,30 @@ namespace projekatWP_bar.Migrations
                     b.Property<int>("UserID")
                         .HasColumnType("int");
 
-                    b.Property<int>("targetUID")
-                        .HasColumnType("int");
-
                     b.HasKey("ID");
 
                     b.HasIndex("EventID");
 
                     b.HasIndex("UserID");
 
-                    b.HasIndex("targetUID");
-
                     b.ToTable("Vote");
+                });
+
+            modelBuilder.Entity("projekatWP_bar.Model.AttendingEvent", b =>
+                {
+                    b.HasOne("projekatWP_bar.Model.User", "Attendee")
+                        .WithMany("Eventi")
+                        .HasForeignKey("AttendeeID")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("projekatWP_bar.Model.Event", "Event")
+                        .WithMany("Gosti")
+                        .HasForeignKey("EventID")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Attendee");
+
+                    b.Navigation("Event");
                 });
 
             modelBuilder.Entity("projekatWP_bar.Model.Event", b =>
@@ -161,15 +197,7 @@ namespace projekatWP_bar.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("projekatWP_bar.Model.User", "targetUser")
-                        .WithMany("VotedList")
-                        .HasForeignKey("targetUID")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.Navigation("Event");
-
-                    b.Navigation("targetUser");
 
                     b.Navigation("Voter");
                 });
@@ -182,13 +210,15 @@ namespace projekatWP_bar.Migrations
             modelBuilder.Entity("projekatWP_bar.Model.Event", b =>
                 {
                     b.Navigation("Glasovi");
+
+                    b.Navigation("Gosti");
                 });
 
             modelBuilder.Entity("projekatWP_bar.Model.User", b =>
                 {
-                    b.Navigation("Vote");
+                    b.Navigation("Eventi");
 
-                    b.Navigation("VotedList");
+                    b.Navigation("Vote");
                 });
 #pragma warning restore 612, 618
         }

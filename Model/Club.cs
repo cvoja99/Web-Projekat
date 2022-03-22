@@ -21,7 +21,7 @@ namespace projekatWP_bar.Model
         [Column("Adresa")]
         [MaxLength(255)]
         public string Adresa { get; set; }
-
+        [JsonIgnore]
         public List<Event> listaEventova { get; set; }
     }
 }

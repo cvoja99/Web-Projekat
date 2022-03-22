@@ -11,16 +11,14 @@ namespace projekatWP_bar.Model
             public DbSet<Club> Clubovi { get; set; }
             public DbSet<Event> Eventi { get; set; }
             public DbSet<Vote> Votes { get; set; }
-            public DbSet<AttendingEvent> AttendingEvents { get; set; }
             public ClubContext(DbContextOptions options) : base(options)
             {
 
             }
             protected override void OnModelCreating(ModelBuilder mb)
             {
-            mb.Entity<User>().HasMany(q => q.Vote).WithOne(p => p.Voter).OnDelete(DeleteBehavior.Cascade);
-            mb.Entity<User>().HasMany(q => q.Eventi).WithOne(p => p.Attendee).OnDelete(DeleteBehavior.Cascade);
-            mb.Entity<Event>().HasMany(q => q.Gosti).WithOne(p => p.Event).OnDelete(DeleteBehavior.Cascade);
+            mb.Entity<User>().HasMany(q => q.Vote).WithOne(p => p.Voter).HasForeignKey(p=>p.UserID).OnDelete(DeleteBehavior.Cascade);
+            mb.Entity<User>().HasMany(q => q.VotedList).WithOne(p => p.targetUser).HasForeignKey(p => p.targetUID).OnDelete(DeleteBehavior.NoAction);
             mb.Entity<Event>().HasMany(q => q.Glasovi).WithOne(p => p.Event).OnDelete(DeleteBehavior.Cascade);
             mb.Entity<Club>().HasMany(q => q.listaEventova).WithOne(p => p.Klub).OnDelete(DeleteBehavior.Cascade);
         }

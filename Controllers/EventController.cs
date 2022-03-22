@@ -25,9 +25,13 @@ namespace projekatWP_bar.Controllers
         }
         [Route("")]
         [HttpGet]
-        public async Task<List<Event>> PreuzmiEvent()
+        public async Task<List<Event>> PreuzmiEvent([FromQuery(Name = "sortOrder")] string sortOrder)
         {
-            return await Context.Eventi.ToListAsync();
+
+
+            var events = await Context.Eventi.Include(p => p.Izvodjac).Include(p => p.Klub).ToListAsync();
+            return events;
+
         }
         [Route("{clubID}/{userID}")]
         [HttpPost]
@@ -46,23 +50,24 @@ namespace projekatWP_bar.Controllers
             return Ok(event1);
 
 
-        }
+        }   
         [Route("{EventID}")]
         [HttpPut]
-        public async Task IzmeniEvent([FromRoute] int EventID, [FromBody] Event event1)
+        public async Task<IActionResult> IzmeniEvent([FromRoute] int EventID, [FromBody] Event event1)
         {
             try
             {
                 var foundEvent = await Context.FindAsync<Event>(EventID);
                 if (foundEvent == null)
-                    throw new Exception("Event sa tim ID-om nije pronadjen");
+                    return BadRequest("Event sa tim ID-om nije pronadjen");
                 foundEvent.Ime = event1.Ime;
                 foundEvent.Kategorija = event1.Kategorija;
                 await Context.SaveChangesAsync();
+                return Ok(event1);
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                return StatusCode(500);
             }
         }
         [Route("{EventID}")]
@@ -79,29 +84,32 @@ namespace projekatWP_bar.Controllers
         
         [Route("Vote")]
         [HttpPost]
-        public async Task CreateVote([FromBody] Vote vote)
+        public async Task<IActionResult> CreateVote([FromBody] Vote vote)
         {
             var foundVote = (await Context.Votes.Where(x => x.UserID == vote.UserID&& x.EventID == vote.EventID).ToListAsync()).FirstOrDefault();
             if (foundVote != null)
-                throw new Exception("User already voted");
+                return BadRequest("User already voted");
             Vote v = new Vote();
-            var foundEvent = await Context.FindAsync<Event>(vote.EventID);
+            var foundEvent = (await Context.Eventi.Where(x => x.ID == vote.EventID).Include(e => e.Izvodjac).ToListAsync()).FirstOrDefault();
             if (foundEvent == null)
-                throw new Exception("Event sa tim ID-om nije pronadjen");
+                return BadRequest("Event sa tim ID-om nije pronadjen");
             var foundUser = await Context.FindAsync<User>(vote.UserID);
             if (foundUser == null)
-                throw new Exception("User sa tim ID-om nije pronadjen");
+                return BadRequest("User sa tim ID-om nije pronadjen");
+            v.targetUser = foundEvent.Izvodjac;
             v.Event = foundEvent;
             v.Voter = foundUser;
             v.Rating = vote.Rating;
             Context.Votes.Add(v);
             await Context.SaveChangesAsync();
+            return Ok(v);
         }
         [Route("Vote/{EventID}")]
         [HttpGet]
         public async Task<IActionResult> AverageVotes([FromRoute]int eventid)
         {
-            var foundVotes = (await Context.Votes.Where (x=> x.EventID==eventid).ToListAsync());
+            var foundEvent = (await Context.Eventi.Where(x => x.ID == eventid).Include(e => e.Izvodjac).ToListAsync()).FirstOrDefault();
+            var foundVotes = (await Context.Votes.Where (x=> x.targetUID==foundEvent.Izvodjac.ID).ToListAsync());
             int len = foundVotes.Count;
             if(len == 0)
             {

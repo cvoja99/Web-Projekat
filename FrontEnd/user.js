@@ -19,6 +19,7 @@ async getUser () {
     this.prezime=user.prezime;
     this.email=user.email;
     this.eventi=user.eventi;
+    localStorage.setItem("user",this.id);
     window.location.href="/index.html";
 }
 async registerUser(){
@@ -40,6 +41,7 @@ async registerUser(){
             Email:email
          }
     ),
+
         headers: {
        'Content-type': 'application/json; charset=UTF-8'
         }
@@ -49,6 +51,7 @@ async registerUser(){
     this.prezime=user.prezime;
     this.email=user.email;
     this.eventi=user.eventi;
+    localStorage.setItem("user",this.id);
     window.location.href="/index.html";    
 }
 

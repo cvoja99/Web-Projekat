@@ -15,7 +15,6 @@ namespace projekatWP_bar.Model
         [Key]
         public int ID { get; set; }
 
-        [JsonIgnore]
         public Club Klub{ get; set; }
 
         [Column("Ime Eventa")]
@@ -24,8 +23,11 @@ namespace projekatWP_bar.Model
         [Column("Kategorija")]
         [MaxLength(255)]
         public string Kategorija { get; set; }
+        [JsonIgnore]
         public List<Vote> Glasovi { get; set; }
         public User Izvodjac { get; set; }
-        public List<AttendingEvent> Gosti { get; set; }
+
+        [NotMapped]
+        public float rating { get; set; }
     }
 }

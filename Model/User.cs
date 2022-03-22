@@ -26,8 +26,11 @@ namespace projekatWP_bar.Model
         [Column("Email")]
         [MaxLength(255)]
         public string Email { get; set; }
-        public List<AttendingEvent> Eventi { get; set; }
+        [JsonIgnore]
         public List<Vote> Vote { get; set; }
+
+        [JsonIgnore]
+        public List<Vote> VotedList { get; set; }
     }
 }
 

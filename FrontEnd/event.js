@@ -8,10 +8,6 @@ export class Event{
         this.rating=rating;
     }
     async createEvent(klub,ime,kategorija,izvodjac){
-        console.log({ body:JSON.stringify({
-            Ime:ime,
-            Kategorija:kategorija
-        }),});
       if(!ime||!klub||!kategorija||!izvodjac)
             return;
             try {
@@ -50,16 +46,19 @@ export class Event{
     })).json();
     this.ime=event.ime;
     this.kategorija=event.kategorija;
+  
+    
+
 }
     async deleteEvent(){
-        console.log(this);
         const event = await (await fetch(`http://localhost:5000/Event/${this.id}`,{
             method:'DELETE',
     })).json();
         }
     async voteForEvent(userID,rating){
         console.log(this.id, userID, rating);
-        await fetch(`http://localhost:5000/Event/Vote`,{
+        try {
+        const res = await fetch(`http://localhost:5000/Event/Vote`,{
             method:'POST',
             body:JSON.stringify({
                 UserID:userID,
@@ -70,6 +69,15 @@ export class Event{
                 'Content-type': 'application/json; charset=UTF-8'
         }
         })
+        if(res.ok) {
+            alert("Uspesno ste glasali")
+        } else {
+            alert(await res.text())
+        }
+    } catch(e) {
+        console.log(e);
+        alert(e.message);   
+    }
         await this.averageVotes();
     }
     async averageVotes(){

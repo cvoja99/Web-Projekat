@@ -25,10 +25,11 @@ namespace projekatWP_bar.Controllers
         }
         [Route("")]
         [HttpPost]
-        public async Task CreateClub([FromBody] Club club)
+        public async Task<IActionResult> CreateClub([FromBody] Club club)
         {
             Context.Clubovi.Add(club);
             await Context.SaveChangesAsync();
+            return Ok(club);
         }
         [Route("{ClubID}")]
         [HttpPut]

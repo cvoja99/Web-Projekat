@@ -8,7 +8,6 @@
     justify-content: center;
     align-items: center;
     padding-top: 50px;
-    background-image: linear-gradient(to bottom, gray , white);
     color: purple;
     border-radius: 30px;
 }
@@ -17,9 +16,11 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    background-color: #ddd;
     align-items: center;
     width: 100%;
     margin-bottom: 30px;
+    border: 1px solid green;
 }
 ul {
     list-style-type: none;

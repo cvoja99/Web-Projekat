@@ -40,10 +40,52 @@ class Club {
     constructor(ime, adresa) {
         this.ime = ime;
         this.adresa = adresa;
+
     }
-
-
-    crtajMain() {
+    async createClub(ime,adresa){
+        if (!ime||!adresa)
+            return;
+        const club =await ( await fetch(`http://localhost:5000/Klub/`,{
+            method:"POST",
+            body:JSON.stringify({
+                Ime:ime,
+                Adresa:adresa
+            }),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8' 
+            } 
+        })).json();
+        this.id=club.id;
+        this.ime=club.ime;
+        this.adresa=club.adresa;
+        window.location.href = "/index.html";
+    }
+    async editClub(ime,adresa){
+        if (!ime||!adresa)
+            return;
+        const club = await(await fetcH(`http://localhost:5000/Klub/${this.id}`,{
+            method:'PUT',
+            body:JSON.stringify({
+                Ime: ime || this.ime,
+                Adresa:adresa || this.kategorija
+            }),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8' 
+            }  
+        })).json();
+        this.ime=club.ime;
+        this.adresa=club.adresa;
+    }
+    async deleteClub(){
+        const club=await(await fetcH(`http://localhost:5000/Klub/${this.id}`,{
+            method:'DELETE',
+            })).json();
+    }
+    async crtajMain() {
+        const users= await(await fetch(`http://localhost:5000/User`)).json();
+        const clubs= await(await fetch("http://localhost:5000/Klub")).json();
+        console.log(users,clubs);
+    
         let regPanel = document.createElement("div");
         regPanel.className = "login-reg-panel";
         document.body.appendChild(regPanel);
@@ -85,7 +127,7 @@ class Club {
     
         let eventInput=document.createElement("input");
         eventInput.type="radio"; 
-        eventInput.name="active-event-panel";
+        eventInput.name="active-club-panel";
         eventInput.id="log-event-show";
         eventInfoBox.appendChild(eventInput);
     
@@ -95,7 +137,7 @@ class Club {
     
         let loginShow=document.createElement("div");
         loginShow.className="login-show";
-        whitePanel.appendChild(loginShow)
+        whitePanel.appendChild(loginShow);
     
         let loginShowHeading=document.createElement("h2");
         loginShowHeading.innerText="Create Club";
@@ -114,6 +156,7 @@ class Club {
         let loginShowInput3=document.createElement("input");
         loginShowInput3.type="button";
         loginShowInput3.value="Create Club";
+        loginShowInput3.onclick=()=>club.createClub(loginShowInput1.value,loginShowInput2.value);
         loginShow.appendChild(loginShowInput3);
     
         let registerShow=document.createElement("div");
@@ -123,7 +166,7 @@ class Club {
         let registerShowHeading=document.createElement("h2");
         registerShowHeading.innerText="Create Event";
         registerShow.appendChild(registerShowHeading);
-    
+        
         let registerShowInput1=document.createElement("input");
         registerShowInput1.type="text";
         registerShowInput1.placeholder="Ime"
@@ -136,37 +179,56 @@ class Club {
     
         let chooseClub=document.createElement("select");
         registerShow.appendChild(chooseClub);
-        let registerShowSelectOption1=document.createElement("option");
-        registerShowSelectOption1.value=1;
-        registerShowSelectOption1.innerText="Klub1";
-        chooseClub.appendChild(registerShowSelectOption1);
+                console.log("poz");
+
+        for(let i=0;i<clubs.length;i++) {
+            let registerShowSelectOption2=document.createElement("option");
+            registerShowSelectOption2.value=clubs[i].id;
+            registerShowSelectOption2.innerText=clubs[i].ime;
+            registerShowSelectOption2.selected = i === 0;
+            chooseClub.appendChild(registerShowSelectOption2);
+        }
     
-        let registerShowSelectOption2=document.createElement("option");
-        registerShowSelectOption2.value=2;
-        registerShowSelectOption2.innerText="Klub2";
-        registerShowSelectOption2.selected = true;
-        chooseClub.appendChild(registerShowSelectOption2);
+        const chooseUser=document.createElement("select");
+        registerShow.appendChild(chooseUser);
+        for(let i=0;i<users.length;i++) {
+            let registerShowSelectOption2=document.createElement("option");
+            registerShowSelectOption2.value=users[i].id;
+            registerShowSelectOption2.innerText=users[i].ime;
+            registerShowSelectOption2.selected = i === 0;
+            chooseUser.appendChild(registerShowSelectOption2);
+        }
     
-        const chooseEvent=document.createElement("select");
-        registerShow.appendChild(chooseEvent);
-    
-        let registerShowSelectOption3=document.createElement("option");
-        registerShowSelectOption3.value=1;
-        registerShowSelectOption3.innerText="User1";
-        registerShowSelectOption3.selected = true;
-        chooseEvent.appendChild(registerShowSelectOption3);
-    
-        let registerShowSelectOption4=document.createElement("option");
-        registerShowSelectOption4.value=2;
-        registerShowSelectOption4.innerText="User2";
-        chooseEvent.appendChild(registerShowSelectOption4);
-        
+
         let createEventButton=document.createElement("input");
         createEventButton.type="button";
         createEventButton.value="Create Event";
-        createEventButton.onclick = () => event.createEvent(chooseClub.value, registerShowInput1.value, registerShowInput2.value, chooseEvent.value );
+        createEventButton.onclick = () => event.createEvent(chooseClub.value, registerShowInput1.value, registerShowInput2.value, chooseUser.value );
         registerShow.appendChild(createEventButton);
+        $('.login-info-box').fadeOut();
+    $('.login-show').addClass('show-log-panel');
+    $('.login-reg-panel input[type="radio"]').on('change', function() {
+        if($('#log-event-show').is(':checked')) {
+            $('.register-info-box').fadeOut(); 
+            $('.login-info-box').fadeIn();
+            
+            $('.white-panel').addClass('right-log');
+            $('.register-show').addClass('show-log-panel');
+            $('.login-show').removeClass('show-log-panel');
+            
+        }
+        else if($('#log-club-show').is(':checked')) {
+            $('.register-info-box').fadeIn();
+            $('.login-info-box').fadeOut();
+            
+            $('.white-panel').removeClass('right-log');
+            
+            $('.login-show').addClass('show-log-panel');
+            $('.register-show').removeClass('show-log-panel');
+        }
+    }
     
+    ); 
     }    
 }
 

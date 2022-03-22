@@ -32,7 +32,7 @@ namespace projekatWP_bar.Controllers
                 return BadRequest();
             Context.Users.Add(user);
             await Context.SaveChangesAsync();
-            return Ok(foundUser);
+            return Ok(user);
         }
         [Route("{email}")]
         [HttpPost]
